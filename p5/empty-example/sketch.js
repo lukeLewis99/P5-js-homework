@@ -14,8 +14,8 @@ function hueristic(a, b) {
 
 
 
-var cols = 25;
-var rows = 25;
+var cols = 100;
+var rows = 100;
 var grid = new Array(cols);
 
 var openSet = [];
@@ -43,6 +43,7 @@ function Spot(i, j) {
   this.addNeighbors = function(grid) {
     var i = this.i;
     var j = this.j;
+    /*
     if (i < cols - 1) {
       this.neighbors.push(grid[i + 1][j]);
     }
@@ -55,13 +56,28 @@ function Spot(i, j) {
     if (j > 0) {
       this.neighbors.push(grid[i][j - 1]);
     }
+    */
 
+    for(var x = -1; x < 2; x++){
+
+      for(var y = -1; y < 2; y++){
+
+        if(this.i + x > -1 && this.i + x < cols){
+
+          if(this.j + y > -1 && this.j + y < rows){
+
+            this.neighbors.push(grid[this.i + x][this.j+y]);
+
+          }
+        }
+      }
+    }
   }
 }
 
 function setup() {
   // put setup code here
-  createCanvas(400, 400);
+  createCanvas(800, 800);
   console.log('A*');
 
   w = width / cols;
