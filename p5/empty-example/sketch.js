@@ -14,12 +14,13 @@ function hueristic(a, b) {
 
 
 
-var cols = 100;
-var rows = 100;
+var cols = 200;
+var rows = 200;
 var grid = new Array(cols);
 
 var openSet = [];
 var closedSet = [];
+var blocks = [];
 var start;
 var end;
 var w, h;
@@ -40,7 +41,7 @@ function Spot(i, j) {
     rect(this.i * w, this.j * h, w - 1, h - 1);
   }
 
-  this.addNeighbors = function(grid) {
+  this.addNeighbors = function(grid,blocks) {
     var i = this.i;
     var j = this.j;
     /*
@@ -66,13 +67,29 @@ function Spot(i, j) {
 
           if(this.j + y > -1 && this.j + y < rows){
 
-            this.neighbors.push(grid[this.i + x][this.j+y]);
+            if(!blocks.includes(grid[this.i + x][this.j+y])){
+              this.neighbors.push(grid[this.i + x][this.j+y]);
+            }
 
           }
         }
       }
     }
   }
+}
+
+function fillGridWithRandomSpots(grid, density){
+  var returnArray = [];
+
+  for (var i = 0; i < cols; i++) {
+    for (var j = 0; j < rows; j++) {
+      if(Math.random() < density){
+        returnArray.push(grid[i][j]);
+      }
+    }
+  }
+
+  return returnArray;
 }
 
 function setup() {
@@ -93,9 +110,12 @@ function setup() {
     }
   }
 
+  blocks = fillGridWithRandomSpots(grid, 0.3);
+  console.log(blocks);
+
   for (var i = 0; i < cols; i++) {
     for (var j = 0; j < rows; j++) {
-      grid[i][j].addNeighbors(grid);
+      grid[i][j].addNeighbors(grid,blocks);
     }
   }
 
@@ -165,6 +185,10 @@ function draw() {
 
   for (var i = 0; i < openSet.length; i++) {
     openSet[i].show(color(0, 255, 0));
+  }
+
+  for (var i = 0; i < blocks.length; i++) {
+    blocks[i].show(color(0, 0, 0));
   }
 
   //find path
