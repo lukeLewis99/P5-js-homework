@@ -14,8 +14,8 @@ function hueristic(a, b) {
 
 
 
-var cols = 200;
-var rows = 200;
+var cols = 100;
+var rows = 100;
 var grid = new Array(cols);
 
 var openSet = [];
@@ -33,6 +33,7 @@ function Spot(i, j) {
   this.g = 0;
   this.h = 0;
   this.neighbors = [];
+  this.blockNeighbors = 0;
   this.previous = undefined;
 
   this.show = function(col) {
@@ -44,6 +45,8 @@ function Spot(i, j) {
   this.addNeighbors = function(grid,blocks) {
     var i = this.i;
     var j = this.j;
+    this.blockNeighbors = 0;
+    this.neighbors = [];
     /*
     if (i < cols - 1) {
       this.neighbors.push(grid[i + 1][j]);
@@ -69,16 +72,22 @@ function Spot(i, j) {
 
             if(!blocks.includes(grid[this.i + x][this.j+y])){
               this.neighbors.push(grid[this.i + x][this.j+y]);
+            }else{
+            	this.blockNeighbors += 1;
             }
 
+          }else{
+          	this.blockNeighbors -= 1;
           }
+        }else{
+        	this.blockNeighbors -= 1;
         }
       }
     }
   }
 }
 
-function fillGridWithRandomSpots(grid, density){
+function fillGridWithRandomSpots(grid, density, smoothing){
   var returnArray = [];
 
   for (var i = 0; i < cols; i++) {
@@ -89,12 +98,42 @@ function fillGridWithRandomSpots(grid, density){
     }
   }
 
+  for (var i = 0; i < returnArray.length; i++) {
+    
+  }
+
+  for (var i = 0; i < cols; i++) {
+    for (var j = 0; j < rows; j++) {
+      grid[i][j].addNeighbors(grid,returnArray);
+    }
+  }
+ 
+
+  for(var x = 0; x < smoothing; x++){
+
+  for (var i = 0; i < cols; i++) {
+    for (var j = 0; j < rows; j++) {
+      if(returnArray.includes(grid[i][j])){
+
+      	if(grid[i][j].blockNeighbors < 4){
+      		removeFromArray(returnArray,grid[i][j]);
+      	}
+      }else{
+      	if(grid[i][j].blockNeighbors > 3){
+      		returnArray.push(grid[i][j]);
+      	}
+      }
+    }
+  }
+
+  }
+
   return returnArray;
 }
 
 function setup() {
   // put setup code here
-  createCanvas(800, 800);
+  createCanvas(600, 600);
   console.log('A*');
 
   w = width / cols;
@@ -110,8 +149,8 @@ function setup() {
     }
   }
 
-  blocks = fillGridWithRandomSpots(grid, 0.3);
-  console.log(blocks);
+  blocks = fillGridWithRandomSpots(grid, 0.4, 10);
+
 
   for (var i = 0; i < cols; i++) {
     for (var j = 0; j < rows; j++) {
