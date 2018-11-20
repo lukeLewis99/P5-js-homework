@@ -39,7 +39,7 @@ function Spot(i, j) {
   this.show = function(col) {
     fill(col);
     noStroke();
-    rect(this.i * w, this.j * h, w - 1, h - 1);
+    rect(this.i * w, this.j * h, w , h);
   }
 
   this.addNeighbors = function(grid,blocks) {
@@ -77,10 +77,10 @@ function Spot(i, j) {
             }
 
           }else{
-          	this.blockNeighbors -= 1;
+          	this.blockNeighbors -= 0.5;
           }
         }else{
-        	this.blockNeighbors -= 1;
+        	this.blockNeighbors -= 0.5;
         }
       }
     }
@@ -115,11 +115,11 @@ function fillGridWithRandomSpots(grid, density, smoothing){
     for (var j = 0; j < rows; j++) {
       if(returnArray.includes(grid[i][j])){
 
-      	if(grid[i][j].blockNeighbors < 4){
+      	if(grid[i][j].blockNeighbors + Math.random() < 6){
       		removeFromArray(returnArray,grid[i][j]);
       	}
       }else{
-      	if(grid[i][j].blockNeighbors > 3){
+      	if(grid[i][j].blockNeighbors + Math.random() > 4){
       		returnArray.push(grid[i][j]);
       	}
       }
@@ -149,7 +149,7 @@ function setup() {
     }
   }
 
-  blocks = fillGridWithRandomSpots(grid, 0.4, 10);
+  blocks = fillGridWithRandomSpots(grid, 0.5, 10);
 
 
   for (var i = 0; i < cols; i++) {
@@ -210,13 +210,9 @@ function draw() {
       }
     }
   }
-  background(0);
+  background(255);
 
-  for (var i = 0; i < cols; i++) {
-    for (var j = 0; j < rows; j++) {
-      grid[i][j].show(color(255));
-    }
-  }
+
 
   for (var i = 0; i < closedSet.length; i++) {
     closedSet[i].show(color(255, 0, 0));
